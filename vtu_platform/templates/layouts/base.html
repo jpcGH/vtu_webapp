@@ -1,0 +1,25 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %}VTU Platform{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'css/design-system.css' %}" />
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar glass">
+      <a href="/" class="brand">VTU<span>Platform</span></a>
+      <nav>
+        <a href="/pricing/">Pricing</a>
+        <a href="/vtu/buy/">Buy Services</a>
+        <a href="/ledger/wallet/">Wallet</a>
+        <a href="/dashboard/">Ops Console</a>
+      </nav>
+    </header>
+
+    <main class="content">{% block content %}{% endblock %}</main>
+  </div>
+</body>
+</html>

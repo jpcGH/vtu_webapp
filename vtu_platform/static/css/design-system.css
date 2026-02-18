@@ -1,0 +1,46 @@
+:root {
+  --bg: #060a1a;
+  --surface: rgba(20, 30, 56, 0.72);
+  --text: #f5f8ff;
+  --muted: #9cb2d6;
+  --primary: #56d3ff;
+  --secondary: #a775ff;
+  --radius: 18px;
+  --shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: Inter, Segoe UI, Roboto, sans-serif;
+  color: var(--text);
+  min-height: 100vh;
+  background: radial-gradient(circle at top right, #1b2a55 0%, var(--bg) 55%);
+}
+.app-shell { max-width: 1120px; margin: 0 auto; padding: 24px; }
+.topbar {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 32px; padding: 16px 20px; border-radius: var(--radius);
+}
+.glass { backdrop-filter: blur(14px); background: rgba(12, 20, 37, 0.5); border: 1px solid rgba(255,255,255,.08); }
+.brand { color: var(--text); text-decoration: none; font-weight: 700; font-size: 1.3rem; }
+.brand span { color: var(--primary); }
+nav a { color: var(--muted); text-decoration: none; margin-left: 16px; }
+nav a:hover { color: var(--text); }
+.card {
+  background: var(--surface); border: 1px solid rgba(255,255,255,.08);
+  border-radius: var(--radius); box-shadow: var(--shadow); padding: 30px;
+}
+.hero h1 { font-size: clamp(2rem, 5vw, 3rem); max-width: 18ch; margin: 12px 0; }
+.badge {
+  display: inline-block; padding: 8px 14px; border-radius: 999px;
+  background: linear-gradient(120deg, var(--primary), var(--secondary));
+  color: #051025; font-weight: 700; font-size: .8rem;
+}
+.cta-row { display: flex; gap: 12px; margin-top: 20px; }
+.btn {
+  border: none; border-radius: 12px; text-decoration: none;
+  padding: 12px 18px; display: inline-block; font-weight: 600;
+}
+.btn-primary { background: linear-gradient(120deg, var(--primary), var(--secondary)); color: #0b1022; }
+.btn-secondary { background: transparent; border: 1px solid rgba(255,255,255,.2); color: var(--text); }
+.auth-card { max-width: 460px; }

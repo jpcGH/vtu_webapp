@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from abc import ABC, abstractmethod
-from dataclasses import dataclass
 from decimal import Decimal
 from uuid import uuid4
 
@@ -12,70 +10,15 @@ from apps.ledger.models import LedgerEntry
 from apps.ledger.services import debit_wallet, reverse_transaction
 from apps.referrals.services import evaluate_referral_bonus
 from apps.vtu.models import PurchaseOrder, ServiceProvider
-
-
-@dataclass
-class VTUResult:
-    success: bool
-    message: str
-    provider_reference: str = ''
-    error_code: str = ''
-    raw_response: dict | None = None
-
-
-class BaseProvider(ABC):
-    @abstractmethod
-    def purchase_airtime(self, network: str, phone: str, amount: Decimal, reference: str) -> VTUResult:
-        raise NotImplementedError
-
-    @abstractmethod
-    def purchase_data(self, network: str, plan_code: str, phone: str, reference: str) -> VTUResult:
-        raise NotImplementedError
-
-    @abstractmethod
-    def purchase_bill(self, biller_code: str, customer_id: str, amount: Decimal, reference: str) -> VTUResult:
-        raise NotImplementedError
-
-
-class MockProvider(BaseProvider):
-    def _is_failure(self, value: str) -> bool:
-        return value.strip().upper().startswith('FAIL')
-
-    def purchase_airtime(self, network: str, phone: str, amount: Decimal, reference: str) -> VTUResult:
-        if self._is_failure(phone):
-            return VTUResult(success=False, message='Mock airtime purchase failed', error_code='MOCK_FAILED')
-        return VTUResult(
-            success=True,
-            message='Mock airtime purchase successful',
-            provider_reference=f'MOCK-AIR-{reference[-8:]}',
-            raw_response={'network': network, 'phone': phone, 'amount': str(amount)},
-        )
-
-    def purchase_data(self, network: str, plan_code: str, phone: str, reference: str) -> VTUResult:
-        if self._is_failure(phone) or self._is_failure(plan_code):
-            return VTUResult(success=False, message='Mock data purchase failed', error_code='MOCK_FAILED')
-        return VTUResult(
-            success=True,
-            message='Mock data purchase successful',
-            provider_reference=f'MOCK-DATA-{reference[-8:]}',
-            raw_response={'network': network, 'phone': phone, 'plan_code': plan_code},
-        )
-
-    def purchase_bill(self, biller_code: str, customer_id: str, amount: Decimal, reference: str) -> VTUResult:
-        if self._is_failure(customer_id) or self._is_failure(biller_code):
-            return VTUResult(success=False, message='Mock bill payment failed', error_code='MOCK_FAILED')
-        return VTUResult(
-            success=True,
-            message='Mock bill payment successful',
-            provider_reference=f'MOCK-BILL-{reference[-8:]}',
-            raw_response={'biller_code': biller_code, 'customer_id': customer_id, 'amount': str(amount)},
-        )
+from apps.vtu.providers import BaseProvider, MockProvider
 
 
 def get_provider_client() -> BaseProvider:
     provider_name = getattr(settings, 'VTU_PROVIDER', 'mock').lower()
-    if provider_name in {'mock', 'stub'}:
-        return MockProvider()
+    if provider_name == 'vtpass':
+        from apps.vtu.providers.vtpass import VTpassProvider
+
+        return VTpassProvider(config=settings.VTPASS_CONFIG)
     return MockProvider()
 
 
@@ -152,18 +95,51 @@ def process_purchase(order_id: int) -> PurchaseOrder:
             reference=order.reference,
         )
 
-    if result.success:
+    order.provider_reference = result.provider_ref
+    order.message = result.message
+    order.provider_response = result.raw or {}
+
+    if result.status == 'SUCCESS':
         order.status = PurchaseOrder.Status.SUCCESS
-        order.provider_reference = result.provider_reference
-        order.message = result.message
-        order.provider_response = result.raw_response or {}
         order.save(update_fields=['status', 'provider_reference', 'message', 'provider_response'])
         evaluate_referral_bonus(order.user)
         return order
 
-    reverse_transaction(order.ledger_reference, reason=result.message or result.error_code or 'provider_failure')
+    if result.status == 'PENDING':
+        order.status = PurchaseOrder.Status.PENDING
+        order.save(update_fields=['status', 'provider_reference', 'message', 'provider_response'])
+        from apps.vtu.tasks import verify_pending_purchase
+
+        verify_pending_purchase.delay(order.id)
+        return order
+
+    reverse_transaction(order.ledger_reference, reason=result.message or 'provider_failure')
     order.status = PurchaseOrder.Status.FAILED
+    order.save(update_fields=['status', 'provider_reference', 'message', 'provider_response'])
+    return order
+
+
+def verify_purchase(order_id: int) -> PurchaseOrder:
+    order = PurchaseOrder.objects.get(pk=order_id)
+    if order.status != PurchaseOrder.Status.PENDING:
+        return order
+
+    result = get_provider_client().verify(reference=order.reference, provider_ref=order.provider_reference)
+    order.provider_reference = result.provider_ref or order.provider_reference
     order.message = result.message
-    order.provider_response = result.raw_response or {}
-    order.save(update_fields=['status', 'message', 'provider_response'])
+    order.provider_response = result.raw or {}
+
+    if result.status == 'SUCCESS':
+        order.status = PurchaseOrder.Status.SUCCESS
+        order.save(update_fields=['status', 'provider_reference', 'message', 'provider_response'])
+        evaluate_referral_bonus(order.user)
+        return order
+
+    if result.status == 'PENDING':
+        order.save(update_fields=['provider_reference', 'message', 'provider_response'])
+        return order
+
+    reverse_transaction(order.ledger_reference, reason=result.message or 'verification_failure')
+    order.status = PurchaseOrder.Status.FAILED
+    order.save(update_fields=['status', 'provider_reference', 'message', 'provider_response'])
     return order

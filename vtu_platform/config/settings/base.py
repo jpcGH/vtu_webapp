@@ -1,5 +1,6 @@
 from pathlib import Path
 import environ
+from django.core.exceptions import ImproperlyConfigured
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 APPS_DIR = BASE_DIR / 'apps'
@@ -118,5 +119,29 @@ MONNIFY_SECRET_KEY = env('MONNIFY_SECRET_KEY', default='')
 MONNIFY_CONTRACT_CODE = env('MONNIFY_CONTRACT_CODE', default='')
 
 VTU_PROVIDER = env('VTU_PROVIDER', default='stub')
+
+
+def get_vtpass_settings(*, require: bool = False):
+    env_map = {
+        'base_url': 'VTPASS_BASE_URL',
+        'api_key': 'VTPASS_API_KEY',
+        'username': 'VTPASS_USERNAME',
+        'password': 'VTPASS_PASSWORD',
+    }
+    config = {
+        'base_url': env('VTPASS_BASE_URL', default='https://sandbox.vtpass.com'),
+        'api_key': env('VTPASS_API_KEY', default=''),
+        'username': env('VTPASS_USERNAME', default=''),
+        'password': env('VTPASS_PASSWORD', default=''),
+    }
+    if require:
+        missing = [env_map[key] for key, value in config.items() if not value]
+        if missing:
+            names = ', '.join(missing)
+            raise ImproperlyConfigured(f'VTpass is enabled for production but required env vars are missing: {names}.')
+    return config
+
+
+VTPASS_CONFIG = get_vtpass_settings(require=False)
 REFERRAL_BONUS_PERCENT = env.float('REFERRAL_BONUS_PERCENT', default=1.0)
 REFERRAL_MIN_FUND = env.float('REFERRAL_MIN_FUND', default=1000.0)

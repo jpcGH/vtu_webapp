@@ -16,3 +16,6 @@ SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 X_FRAME_OPTIONS = 'DENY'
 SECURE_CONTENT_TYPE_NOSNIFF = True
 SECURE_REFERRER_POLICY = 'strict-origin-when-cross-origin'
+
+if VTU_PROVIDER.lower() == 'vtpass':
+    VTPASS_CONFIG = get_vtpass_settings(require=True)

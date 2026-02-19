@@ -46,3 +46,17 @@ class PurchaseOrder(models.Model):
 
     def __str__(self):
         return f'{self.reference} ({self.get_status_display()})'
+
+
+class DataBundlePlan(models.Model):
+    provider = models.ForeignKey(ServiceProvider, on_delete=models.PROTECT, related_name='data_plans')
+    network = models.CharField(max_length=30)
+    plan_code = models.CharField(max_length=80, unique=True)
+    name = models.CharField(max_length=120)
+    amount = models.DecimalField(max_digits=14, decimal_places=2)
+    is_active = models.BooleanField(default=True)
+    raw = models.JSONField(default=dict, blank=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f'{self.network} - {self.name}'

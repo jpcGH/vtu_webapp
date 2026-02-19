@@ -1,5 +1,7 @@
 from django.contrib import admin
-from .models import PurchaseOrder, ServiceProvider
+
+from apps.vtu.models import DataBundlePlan, PurchaseOrder, ServiceProvider
 
 admin.site.register(ServiceProvider)
 admin.site.register(PurchaseOrder)
+admin.site.register(DataBundlePlan)

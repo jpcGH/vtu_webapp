@@ -76,3 +76,23 @@ vtu_platform/
 - [ ] Wire Monnify credentials and signature verification
 - [ ] Configure Sentry/APM and external centralized logging
 - [ ] Set up CI (lint/test/migrate checks)
+
+## VTpass Setup
+1. Enable provider:
+   ```bash
+   export VTU_PROVIDER=vtpass
+   ```
+2. Configure VTpass credentials:
+   ```bash
+   export VTPASS_BASE_URL="https://sandbox.vtpass.com"
+   export VTPASS_API_KEY="your-api-key"
+   export VTPASS_USERNAME="your-username"
+   export VTPASS_PASSWORD="your-password"
+   ```
+3. In production (`config.settings.prod`), these values are validated and Django raises a clear configuration error if any required key is missing.
+4. Sync data plans from VTpass when supported:
+   ```bash
+   python manage.py sync_data_bundles --service-id mtn-data --provider-slug vtpass
+   ```
+   If VTpass returns no plans for a service, manage plans manually through the Django admin `DataBundlePlan` model.
+5. Pending transactions are re-verified via background tasks (`verify_pending_purchase` / `sweep_pending_purchases`) and failed final verifications trigger wallet reversal automatically.

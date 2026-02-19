@@ -1,0 +1,12 @@
+{% extends 'layouts/base.html' %}
+{% block title %}Sign Up{% endblock %}
+{% block content %}
+<section class="card">
+  <h2>Create Account</h2>
+  <form method="post" class="stack">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">Create account</button>
+  </form>
+</section>
+{% endblock %}

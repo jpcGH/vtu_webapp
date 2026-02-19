@@ -16,6 +16,7 @@ from django.utils.crypto import constant_time_compare
 from apps.ledger.models import LedgerEntry
 from apps.ledger.services import credit_wallet
 from apps.payments.models import IncomingPayment, PaymentWebhookEvent, VirtualAccount
+from apps.referrals.services import evaluate_referral_bonus
 
 logger = logging.getLogger(__name__)
 
@@ -182,6 +183,8 @@ def process_monnify_transaction_event(payload: dict) -> None:
 
         incoming.status = IncomingPayment.Status.PROCESSED
         incoming.save(update_fields=['status'])
+
+        evaluate_referral_bonus(user)
 
 
 def ensure_user_reserved_accounts(user) -> int:

@@ -1,4 +1,5 @@
 from django.contrib import admin
-from .models import ReferralBonus
 
-admin.site.register(ReferralBonus)
+from .models import Referral
+
+admin.site.register(Referral)

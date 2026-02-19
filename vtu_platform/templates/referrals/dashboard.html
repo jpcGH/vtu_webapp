@@ -1,3 +1,23 @@
 {% extends 'layouts/base.html' %}
 {% block title %}Referrals{% endblock %}
-{% block content %}<section class="card"><h2>Referral Dashboard</h2></section>{% endblock %}
+{% block content %}
+<section class="card">
+  <h2>Referral Dashboard</h2>
+  <p><strong>Your referral code:</strong> <code id="ref-code">{{ referral_code }}</code></p>
+  <div style="display:flex; gap:12px; flex-wrap:wrap; margin: 12px 0;">
+    <button class="btn" onclick="navigator.clipboard.writeText('{{ referral_code }}')">Copy Code</button>
+    <a class="btn btn-primary" href="{{ whatsapp_share_link }}" target="_blank" rel="noopener noreferrer">Share on WhatsApp</a>
+  </div>
+  <p><small>Signup link: <a href="{{ referral_link }}">{{ referral_link }}</a></small></p>
+</section>
+
+<section class="card" style="margin-top:16px;">
+  <h3>Referral Stats</h3>
+  <ul>
+    <li>Total referrals: {{ stats.total }}</li>
+    <li>Pending rewards: {{ stats.pending }}</li>
+    <li>Paid rewards: {{ stats.paid }}</li>
+    <li>Total bonus earned: ₦{{ stats.total_bonus }}</li>
+  </ul>
+</section>
+{% endblock %}

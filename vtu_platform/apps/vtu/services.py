@@ -10,6 +10,7 @@ from django.db import transaction
 
 from apps.ledger.models import LedgerEntry
 from apps.ledger.services import debit_wallet, reverse_transaction
+from apps.referrals.services import evaluate_referral_bonus
 from apps.vtu.models import PurchaseOrder, ServiceProvider
 
 
@@ -157,6 +158,7 @@ def process_purchase(order_id: int) -> PurchaseOrder:
         order.message = result.message
         order.provider_response = result.raw_response or {}
         order.save(update_fields=['status', 'provider_reference', 'message', 'provider_response'])
+        evaluate_referral_bonus(order.user)
         return order
 
     reverse_transaction(order.ledger_reference, reason=result.message or result.error_code or 'provider_failure')

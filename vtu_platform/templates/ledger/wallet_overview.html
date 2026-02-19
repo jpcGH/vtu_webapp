@@ -1,3 +1,39 @@
 {% extends 'layouts/base.html' %}
 {% block title %}Wallet{% endblock %}
-{% block content %}<section class="card"><h2>Wallet Overview</h2></section>{% endblock %}
+{% block page_title %}Wallet Overview{% endblock %}
+{% block content %}
+<section class="split">
+  <article class="card">
+    <p class="badge">Bank Transfer</p>
+    <h2>Fund wallet with Monnify reserved account</h2>
+    {% if request.user.is_authenticated and request.user.virtual_accounts.all %}
+    <div class="stack">
+      {% for account in request.user.virtual_accounts.all %}
+      <div class="kv-item">
+        <span>{{ account.provider|upper }} • {{ account.bank_name|default:'Bank' }}</span>
+        <strong>{{ account.account_number }}</strong>
+        <p class="muted">{{ account.account_name }}</p>
+        <div class="inline-actions">
+          <button class="btn btn-secondary" type="button" data-copy-value="{{ account.account_number }}">Copy number</button>
+          <button class="btn btn-secondary" type="button" data-copy-value="{{ account.account_name }}">Copy name</button>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+      No Monnify account yet. Your reserved account appears here once provisioned.
+    </div>
+    {% endif %}
+  </article>
+
+  <article class="card">
+    <h3>Funding notes</h3>
+    <ul class="muted">
+      <li>Transfer only from supported Nigerian bank accounts.</li>
+      <li>Wallet is credited automatically after successful webhook processing.</li>
+      <li>Use your assigned account details only.</li>
+    </ul>
+  </article>
+</section>
+{% endblock %}

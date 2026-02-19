@@ -1,34 +1,51 @@
 {% extends 'layouts/base.html' %}
 {% block title %}Buy VTU{% endblock %}
+{% block page_title %}Buy Services{% endblock %}
 {% block content %}
 <section class="card">
+  <p class="badge">Transaction</p>
   <h2>Buy Airtime, Data & Bills</h2>
-  <form method="post">
+  <form method="post" class="stack">
     {% csrf_token %}
-    <label>Provider</label>
-    <select name="provider" required>
-      {% for provider in providers %}
-      <option value="{{ provider.id }}">{{ provider.name }}</option>
-      {% endfor %}
-    </select>
+    <div class="form-grid">
+      <div>
+        <label>Provider</label>
+        <select name="provider" required>
+          {% for provider in providers %}
+          <option value="{{ provider.id }}">{{ provider.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
 
-    <label>Product Type</label>
-    <select name="product_type" required>
-      {% for value, label in product_types %}
-      <option value="{{ value }}">{{ label }}</option>
-      {% endfor %}
-    </select>
+      <div>
+        <label>Product Type</label>
+        <select name="product_type" required>
+          {% for value, label in product_types %}
+          <option value="{{ value }}">{{ label }}</option>
+          {% endfor %}
+        </select>
+      </div>
 
-    <label>Amount</label>
-    <input type="number" min="1" step="0.01" name="amount" required>
+      <div>
+        <label>Amount</label>
+        <input type="number" min="1" step="0.01" name="amount" required>
+      </div>
 
-    <label>Destination (phone/customer ID)</label>
-    <input type="text" name="destination" required>
+      <div>
+        <label>Destination (phone/customer ID)</label>
+        <input type="text" name="destination" required>
+      </div>
 
-    <label>Service Code (network, plan code or biller code)</label>
-    <input type="text" name="service_code">
+      <div>
+        <label>Service Code (network, plan code or biller code)</label>
+        <input type="text" name="service_code">
+      </div>
+    </div>
 
-    <button type="submit">Purchase</button>
+    <div class="inline-actions">
+      <button class="btn btn-primary" type="submit">Purchase</button>
+      <a class="btn btn-secondary" href="/ledger/wallet/">Fund wallet</a>
+    </div>
   </form>
 </section>
 {% endblock %}

@@ -1,16 +1,19 @@
 {% extends 'layouts/base.html' %}
 {% block title %}Receipt {{ order.reference }}{% endblock %}
+{% block page_title %}Transaction Receipt{% endblock %}
 {% block content %}
 <section class="card">
   <h2>VTU Receipt</h2>
-  <p><strong>Reference:</strong> {{ order.reference }}</p>
-  <p><strong>Status:</strong> {{ order.get_status_display }}</p>
-  <p><strong>Product:</strong> {{ order.get_product_type_display }}</p>
-  <p><strong>Amount:</strong> {{ order.amount }}</p>
-  <p><strong>Destination:</strong> {{ order.destination }}</p>
-  <p><strong>Service Code:</strong> {{ order.service_code|default:'-' }}</p>
-  <p><strong>Provider:</strong> {{ order.provider.name }}</p>
-  <p><strong>Provider Ref:</strong> {{ order.provider_reference|default:'-' }}</p>
-  <p><strong>Date:</strong> {{ order.created_at }}</p>
+  <div class="kv">
+    <div class="kv-item"><span>Reference</span><strong>{{ order.reference }}</strong></div>
+    <div class="kv-item"><span>Status</span><strong>{{ order.get_status_display }}</strong></div>
+    <div class="kv-item"><span>Product</span><strong>{{ order.get_product_type_display }}</strong></div>
+    <div class="kv-item"><span>Amount</span><strong>₦{{ order.amount }}</strong></div>
+    <div class="kv-item"><span>Destination</span><strong>{{ order.destination }}</strong></div>
+    <div class="kv-item"><span>Service Code</span><strong>{{ order.service_code|default:'-' }}</strong></div>
+    <div class="kv-item"><span>Provider</span><strong>{{ order.provider.name }}</strong></div>
+    <div class="kv-item"><span>Provider Ref</span><strong>{{ order.provider_reference|default:'-' }}</strong></div>
+    <div class="kv-item"><span>Date</span><strong>{{ order.created_at }}</strong></div>
+  </div>
 </section>
 {% endblock %}

@@ -8,19 +8,50 @@
   <link rel="stylesheet" href="{% static 'css/design-system.css' %}" />
 </head>
 <body>
-  <div class="app-shell">
-    <header class="topbar glass">
+  <div class="shell-layout">
+    <aside class="sidebar glass" id="app-sidebar">
       <a href="/" class="brand">VTU<span>Platform</span></a>
-      <nav>
-        <a href="/pricing/">Pricing</a>
+      <p class="sidebar-caption">Payment and VTU operations</p>
+      <nav class="sidebar-nav">
+        <a href="/">Overview</a>
         <a href="/vtu/buy/">Buy Services</a>
         <a href="/ledger/wallet/">Wallet</a>
         <a href="/referrals/">Referrals</a>
         <a href="/dashboard/">Ops Console</a>
+        <a href="/dashboard/monnify-webhooks/">Webhook Events</a>
+        <a href="/pricing/">Pricing</a>
       </nav>
-    </header>
+    </aside>
 
-    <main class="content">{% block content %}{% endblock %}</main>
+    <div class="main-panel">
+      <header class="topbar glass">
+        <button class="icon-btn" type="button" data-sidebar-toggle aria-label="Toggle sidebar">☰</button>
+        <h1 class="page-title">{% block page_title %}Control Center{% endblock %}</h1>
+        <div class="topbar-actions">
+          {% if request.user.is_authenticated %}
+          <a class="btn btn-ghost" href="/accounts/profile/">Profile</a>
+          {% else %}
+          <a class="btn btn-ghost" href="/accounts/login/">Login</a>
+          {% endif %}
+        </div>
+      </header>
+
+      <main class="content">{% block content %}{% endblock %}</main>
+    </div>
   </div>
+
+  <div class="toast-stack" id="toast-stack" aria-live="polite" aria-atomic="true">
+    {% if messages %}
+      {% for message in messages %}
+      <div class="toast toast-{{ message.tags|default:'info' }}" data-toast>
+        <strong>{{ message.tags|title|default:'Notice' }}</strong>
+        <span>{{ message }}</span>
+        <button type="button" class="toast-close" data-toast-close aria-label="Dismiss message">×</button>
+      </div>
+      {% endfor %}
+    {% endif %}
+  </div>
+
+  <script src="{% static 'js/app.js' %}"></script>
 </body>
 </html>

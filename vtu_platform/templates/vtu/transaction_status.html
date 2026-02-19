@@ -1,0 +1,15 @@
+{% extends 'layouts/base.html' %}
+{% block title %}Transaction {{ order.reference }}{% endblock %}
+{% block content %}
+<section class="card">
+  <h2>Transaction Status</h2>
+  <p><strong>Reference:</strong> {{ order.reference }}</p>
+  <p><strong>Status:</strong> {{ order.get_status_display }}</p>
+  <p><strong>Type:</strong> {{ order.get_product_type_display }}</p>
+  <p><strong>Amount:</strong> {{ order.amount }}</p>
+  <p><strong>Destination:</strong> {{ order.destination }}</p>
+  <p><strong>Message:</strong> {{ order.message|default:'-' }}</p>
+  <p><strong>Provider Ref:</strong> {{ order.provider_reference|default:'-' }}</p>
+  <p><a href="{% url 'vtu:receipt' reference=order.reference %}">View receipt</a></p>
+</section>
+{% endblock %}

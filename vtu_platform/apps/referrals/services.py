@@ -1,6 +1,9 @@
 from decimal import Decimal
+
 from django.conf import settings
+
 from apps.ledger.models import LedgerEntry
+from apps.ledger.services import credit_wallet
 
 
 def apply_referral_bonus(*, referrer_wallet, transaction_reference: str, transaction_amount: Decimal) -> LedgerEntry | None:
@@ -11,11 +14,10 @@ def apply_referral_bonus(*, referrer_wallet, transaction_reference: str, transac
     if bonus <= 0:
         return None
 
-    return LedgerEntry.post_entry(
-        wallet=referrer_wallet,
+    return credit_wallet(
+        user=referrer_wallet.user,
         amount=bonus,
-        entry_type=LedgerEntry.EntryType.CREDIT,
         reference=f'REF-{transaction_reference}',
-        narration='Referral bonus credit',
-        metadata={'source_reference': transaction_reference},
+        tx_type=LedgerEntry.TransactionType.REFERRAL_BONUS,
+        meta={'source_reference': transaction_reference},
     )

@@ -1,0 +1,31 @@
+{% extends "layouts/base.html" %}
+{% block title %}Monnify Webhook Events{% endblock %}
+{% block content %}
+<section>
+  <h1>Monnify Webhook Events</h1>
+  <table>
+    <thead>
+      <tr>
+        <th>Created</th>
+        <th>Event ID</th>
+        <th>Type</th>
+        <th>Processed</th>
+        <th>Error</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for event in page_obj %}
+      <tr>
+        <td>{{ event.created_at }}</td>
+        <td>{{ event.event_id }}</td>
+        <td>{{ event.event_type }}</td>
+        <td>{{ event.processed }}</td>
+        <td>{{ event.processing_error|default:"-" }}</td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="5">No webhook events yet.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+{% endblock %}

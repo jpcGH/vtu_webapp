@@ -2,12 +2,13 @@
 {% block title %}Login{% endblock %}
 {% block page_title %}Sign In{% endblock %}
 {% block content %}
-<section class="card auth-card stack">
+<section class="card auth-card stack spotlight">
+  <p class="badge">Welcome back</p>
   <h2>Sign in</h2>
-  <form method="post" class="stack">
+  <form method="post" class="stack auth-form form-shell">
     {% csrf_token %}
     {{ form.as_p }}
-    <button type="submit" class="btn btn-primary">Login</button>
+    <button type="submit" class="btn btn-primary btn-lg">Login</button>
   </form>
 </section>
 {% endblock %}

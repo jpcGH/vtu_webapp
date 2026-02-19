@@ -1,14 +1,35 @@
 {% extends 'layouts/base.html' %}
+{% load static %}
 {% block title %}Home | VTU Platform{% endblock %}
 {% block page_title %}Platform Overview{% endblock %}
 {% block content %}
-<section class="hero card">
-  <p class="badge">Retail VTU Infrastructure</p>
-  <h1>Scale airtime, data, bills, and wallet operations with confidence.</h1>
-  <p class="muted">Built for reliable transaction processing, secure wallet controls, and staff-first operations.</p>
-  <div class="inline-actions">
-    <a class="btn btn-primary" href="/accounts/login/">Sign in</a>
-    <a class="btn btn-secondary" href="/pricing/">View pricing</a>
+<section class="hero card spotlight">
+  <div>
+    <p class="badge">Retail VTU Infrastructure</p>
+    <h1>Scale airtime, data, bills, and wallet operations with confidence.</h1>
+    <p class="muted">Built for reliable transaction processing, secure wallet controls, and staff-first operations.</p>
+    <div class="inline-actions">
+      <a class="btn btn-primary btn-lg" href="/accounts/login/">Sign in</a>
+      <a class="btn btn-secondary btn-lg" href="/pricing/">View pricing</a>
+    </div>
   </div>
+  <div class="hero-media">
+    <img src="{% static 'images/vtu-hero-illustration.svg' %}" alt="Preview of VTU dashboard analytics" />
+  </div>
+</section>
+
+<section class="feature-strip">
+  <article class="feature-pill">
+    <strong>⚡ Fast settlement</strong>
+    <span class="muted">Real-time wallet updates and transaction confirmations.</span>
+  </article>
+  <article class="feature-pill">
+    <strong>🔒 Secure controls</strong>
+    <span class="muted">Role-aware access, visibility logs, and safer operations.</span>
+  </article>
+  <article class="feature-pill">
+    <strong>📊 Clear reporting</strong>
+    <span class="muted">Understand margins, webhook events, and provider performance.</span>
+  </article>
 </section>
 {% endblock %}

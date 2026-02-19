@@ -1,51 +1,61 @@
 {% extends 'layouts/base.html' %}
+{% load static %}
 {% block title %}Buy VTU{% endblock %}
 {% block page_title %}Buy Services{% endblock %}
 {% block content %}
-<section class="card">
+<section class="card spotlight">
   <p class="badge">Transaction</p>
   <h2>Buy Airtime, Data & Bills</h2>
-  <form method="post" class="stack">
-    {% csrf_token %}
-    <div class="form-grid">
-      <div>
-        <label>Provider</label>
-        <select name="provider" required>
-          {% for provider in providers %}
-          <option value="{{ provider.id }}">{{ provider.name }}</option>
-          {% endfor %}
-        </select>
+  <p class="muted">Fill in customer details, pick a provider, and complete purchase in one clean flow.</p>
+
+  <div class="split">
+    <form method="post" class="stack form-shell">
+      {% csrf_token %}
+      <div class="form-grid">
+        <div>
+          <label>Provider</label>
+          <select name="provider" required>
+            {% for provider in providers %}
+            <option value="{{ provider.id }}">{{ provider.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div>
+          <label>Product Type</label>
+          <select name="product_type" required>
+            {% for value, label in product_types %}
+            <option value="{{ value }}">{{ label }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div>
+          <label>Amount</label>
+          <input type="number" min="1" step="0.01" name="amount" required>
+          <p class="field-hint">Use exact amount in naira.</p>
+        </div>
+
+        <div>
+          <label>Destination (phone/customer ID)</label>
+          <input type="text" name="destination" required>
+        </div>
+
+        <div>
+          <label>Service Code (network, plan code or biller code)</label>
+          <input type="text" name="service_code">
+        </div>
       </div>
 
-      <div>
-        <label>Product Type</label>
-        <select name="product_type" required>
-          {% for value, label in product_types %}
-          <option value="{{ value }}">{{ label }}</option>
-          {% endfor %}
-        </select>
+      <div class="inline-actions">
+        <button class="btn btn-primary btn-lg" type="submit">Purchase</button>
+        <a class="btn btn-secondary btn-lg" href="/ledger/wallet/">Fund wallet</a>
       </div>
+    </form>
 
-      <div>
-        <label>Amount</label>
-        <input type="number" min="1" step="0.01" name="amount" required>
-      </div>
-
-      <div>
-        <label>Destination (phone/customer ID)</label>
-        <input type="text" name="destination" required>
-      </div>
-
-      <div>
-        <label>Service Code (network, plan code or biller code)</label>
-        <input type="text" name="service_code">
-      </div>
-    </div>
-
-    <div class="inline-actions">
-      <button class="btn btn-primary" type="submit">Purchase</button>
-      <a class="btn btn-secondary" href="/ledger/wallet/">Fund wallet</a>
-    </div>
-  </form>
+    <aside class="hero-media">
+      <img src="{% static 'images/vtu-hero-illustration.svg' %}" alt="Digital service purchase illustration" />
+    </aside>
+  </div>
 </section>
 {% endblock %}

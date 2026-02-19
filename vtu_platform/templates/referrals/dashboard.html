@@ -1,23 +1,27 @@
 {% extends 'layouts/base.html' %}
 {% block title %}Referrals{% endblock %}
+{% block page_title %}Referral Dashboard{% endblock %}
 {% block content %}
-<section class="card">
+<section class="card stack">
   <h2>Referral Dashboard</h2>
-  <p><strong>Your referral code:</strong> <code id="ref-code">{{ referral_code }}</code></p>
-  <div style="display:flex; gap:12px; flex-wrap:wrap; margin: 12px 0;">
-    <button class="btn" onclick="navigator.clipboard.writeText('{{ referral_code }}')">Copy Code</button>
+  <div class="kv-item">
+    <span>Your referral code</span>
+    <strong id="ref-code">{{ referral_code|default:'N/A' }}</strong>
+  </div>
+  <div class="inline-actions">
+    <button class="btn btn-secondary" type="button" data-copy-value="{{ referral_code }}">Copy Code</button>
     <a class="btn btn-primary" href="{{ whatsapp_share_link }}" target="_blank" rel="noopener noreferrer">Share on WhatsApp</a>
   </div>
-  <p><small>Signup link: <a href="{{ referral_link }}">{{ referral_link }}</a></small></p>
+  <p class="muted">Signup link: <a href="{{ referral_link }}">{{ referral_link }}</a></p>
 </section>
 
-<section class="card" style="margin-top:16px;">
+<section class="card stack">
   <h3>Referral Stats</h3>
-  <ul>
-    <li>Total referrals: {{ stats.total }}</li>
-    <li>Pending rewards: {{ stats.pending }}</li>
-    <li>Paid rewards: {{ stats.paid }}</li>
-    <li>Total bonus earned: ₦{{ stats.total_bonus }}</li>
-  </ul>
+  <div class="kv">
+    <div class="kv-item"><span>Total referrals</span><strong>{{ stats.total }}</strong></div>
+    <div class="kv-item"><span>Pending rewards</span><strong>{{ stats.pending }}</strong></div>
+    <div class="kv-item"><span>Paid rewards</span><strong>{{ stats.paid }}</strong></div>
+    <div class="kv-item"><span>Total bonus earned</span><strong>₦{{ stats.total_bonus }}</strong></div>
+  </div>
 </section>
 {% endblock %}
